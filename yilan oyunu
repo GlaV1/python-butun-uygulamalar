@@ -1,0 +1,129 @@
+import pygame
+import random
+
+# Oyun penceresi ayarları
+pygame.init()
+clock = pygame.time.Clock()
+screen_width, screen_height = 640, 480
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption('Yılan Oyunu')
+
+
+# Matris oluşturma
+grid_size = 20
+grid_width = screen_width // grid_size
+grid_height = screen_height // grid_size
+
+# Rastgele yerlerde yemler yerleştirme
+food = []
+for _ in range(10):
+    x = random.randint(0, grid_width - 1)
+    y = random.randint(0, grid_height - 1)
+    food.append((x, y))
+
+
+# Yılanın başlangıç pozisyonu
+snake_pos = [(grid_width // 2, grid_height // 2)]
+
+# Yılanın başlangıç yönü (sağ)
+direction = (1, 0)
+
+
+# Tuş dinleyicisi
+def get_input():
+    keys = pygame.key.get_pressed()
+    for key in keys:
+        if keys[pygame.K_LEFT]:
+            return (-1, 0)
+        elif keys[pygame.K_RIGHT]:
+            return (1, 0)
+        elif keys[pygame.K_UP]:
+            return (0, -1)
+        elif keys[pygame.K_DOWN]:
+            return (0, 1)
+    return None
+
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Tuş girişini al
+    input_direction = get_input()
+    if input_direction:
+        direction = input_direction
+
+    # Yılanı hareket ettir
+    x, y = snake_pos[0]
+    dx, dy = direction
+    x += dx
+    y += dy
+    snake_pos
+
+
+# Yılanın tasarımı
+snake_body = pygame.Surface((grid_size, grid_size))
+snake_body.fill((255, 0, 0))
+
+# Yemlerin tasarımı
+food_piece = pygame.Surface((grid_size, grid_size))
+food_piece.fill((0, 255, 0))
+
+
+# Yılanın yediği yemleri tespit etme
+if (x, y) in food:
+    food.remove((x, y))
+    snake_pos.append((x, y))
+
+# Yılanın çarpıştığı duvarları tespit etme
+if x < 0 or x >= grid_width or y < 0 or y >= grid_height:
+    running = False
+
+# Oyunu tekrardan başlatma
+if not running:
+    snake_pos = [(grid_width // 2, grid_height // 2)]
+    direction = (1, 0)
+    running = True
+
+
+# Ekranı temizle
+screen.fill((0, 0, 0))
+
+# Yılanı ve yemleri ekrana çiz
+for x, y in snake_pos:
+    screen.blit(snake_body, (x * grid_size, y * grid_size))
+for x, y in food:
+    screen.blit(food_piece, (x * grid_size, y * grid_size))
+
+# Güncel ekranı göster
+pygame.display.update()
+
+# FPS ayarı
+clock.tick(10)
+pygame.display.flip()
+
+# Yılanı hareket ettir
+x, y = snake_pos[0]
+dx, dy = direction
+x += dx
+y += dy
+snake_pos.insert(0, (x, y))
+
+# Yılanın yediği yemleri tespit etme
+if (x, y) in food:
+    food.remove((x, y))
+    snake_pos.insert(0, (x, y))
+
+    # Ekranı temizle
+    screen.fill((0, 0, 0))
+
+    # Yılanı ve yemleri ekrana çiz
+    for x, y in snake_pos:
+        screen.blit(snake_body, (x * grid_size, y * grid_size))
+    for x, y in food:
+        screen.blit(food_piece, (x * grid_size, y * grid_size))
+
+    # Güncel ekranı göster
+    pygame.display.update()
