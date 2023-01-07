@@ -1,0 +1,7 @@
+age= int(input("kaç yaşındasın :"))
+if age >= 18:
+    print("sen bir yetişkinsin")
+elif age <= 0:
+    print("sen daha doğmadın")
+else:
+    print("sen bir çocuksun")
